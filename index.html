@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Liftup</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Liftup">
+<meta name="theme-color" content="#14171F">
+<style>
+  :root{
+    --bg:#14171F; --bg2:#1A1E28;
+    --card:rgba(255,255,255,.045); --card-brd:rgba(255,255,255,.09);
+    --card-brd-soft:rgba(255,255,255,.06);
+    --ink:#F4F1EA; --muted:#8B92A5; --faint:#565D70;
+    --amber:#EDA83D; --coral:#E97A5F; --sage:#7FAE86; --sky:#6FA0C9;
+    --danger:#E2604A;
+    --r-lg:22px; --r-md:16px; --r-sm:11px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 700px 420px at 15% -8%, rgba(237,168,61,.12), transparent 60%),
+      radial-gradient(ellipse 600px 380px at 100% 0%, rgba(233,122,95,.10), transparent 55%),
+      var(--bg);
+  }
+  .wrap{max-width:480px;margin:0 auto;
+    padding-top:max(20px, env(safe-area-inset-top));
+    padding-left:max(18px, env(safe-area-inset-left));
+    padding-right:max(18px, env(safe-area-inset-right));
+    padding-bottom:calc(96px + env(safe-area-inset-bottom));
+  }
+  h1,h2,h3{margin:0;}
+  svg.icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block;}
+
+  header.top{padding:6px 0 20px;}
+  .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:600;}
+  h1.pagetitle{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-top:2px;}
+
+  .datebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .datebar button{border:none;background:var(--card);border:1px solid var(--card-brd);color:var(--ink);
+    width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;}
+  .datebar button:disabled{opacity:.25;}
+  .datelabel{display:flex;flex-direction:column;align-items:center;}
+  .datelabel b{font-size:15px;font-weight:700;}
+  .badge-today{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);font-weight:700;margin-top:1px;}
+
+  .card{background:var(--card);border:1px solid var(--card-brd);border-radius:var(--r-lg);
+    padding:20px;margin-bottom:14px; backdrop-filter:blur(20px);}
+
+  /* --- dial summary --- */
+  .summary{display:flex;align-items:center;gap:20px;}
+  .dial-wrap{position:relative;width:118px;height:118px;flex-shrink:0;}
+  .dial-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .dial-num b{font-family:ui-monospace,'SF Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-.02em;}
+  .dial-num span{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:2px;}
+  .macros{flex:1;display:flex;flex-direction:column;gap:10px;}
+  .macro-row{display:flex;align-items:center;gap:8px;}
+  .macro-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .macro-label{font-size:12px;color:var(--muted);width:44px;flex-shrink:0;}
+  .macro-track{flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;}
+  .macro-fill{height:100%;border-radius:4px;}
+  .macro-val{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);width:64px;text-align:right;flex-shrink:0;}
+
+  .section-title{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:14px;font-weight:700;color:var(--ink);}
+  .section-title svg{color:var(--amber);}
+  .section-title.workout svg{color:var(--coral);}
+  .section-title.weight svg{color:var(--sky);}
+
+  ul.ledger{list-style:none;margin:0 0 4px;padding:0;}
+  ul.ledger li{display:flex;justify-content:space-between;align-items:center;padding:10px 0;
+    border-bottom:1px solid var(--card-brd-soft);}
+  ul.ledger li:last-child{border-bottom:none;}
+  .li-left b{font-weight:600;font-size:14px;}
+  .li-left small{display:block;color:var(--faint);font-size:11px;margin-top:1px;}
+  .li-right{display:flex;align-items:center;gap:10px;}
+  .li-right span{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);white-space:nowrap;}
+  .li-right button{border:none;background:none;color:var(--faint);padding:2px;display:flex;}
+  .empty{font-style:italic;color:var(--faint);font-size:13.5px;margin:2px 0 4px;}
+
+  form.entry{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  form.entry input{font-family:inherit;font-size:14px;padding:10px 12px;border-radius:var(--r-sm);
+    border:1px solid var(--card-brd);background:rgba(255,255,255,.03);color:var(--ink);}
+  form.entry input::placeholder{color:var(--faint);}
+  form.entry input:focus{outline:none;border-color:var(--amber);}
+  .fname{flex:1 1 100%;}
+  .fnum{flex:1 1 66px;}
+  .addbtn{border:none;background:linear-gradient(135deg,var(--amber),var(--coral));color:#1A1408;
+    width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;
+    font-weight:800;flex-shrink:0;margin-left:auto;}
+
+  .weight-display{display:flex;align-items:baseline;gap:6px;font-family:ui-monospace,monospace;font-size:26px;font-weight:700;}
+  .weight-display span{font-size:13px;color:var(--muted);font-weight:400;}
+
+  /* --- stats --- */
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .stat-card{background:var(--card);border:1px solid var(--card-brd);border-radius:var(--r-md);padding:16px;}
+  .stat-card .num{font-family:ui-monospace,monospace;font-size:22px;font-weight:700;}
+  .stat-card .lbl{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;}
+  .stat-card .num.amber{color:var(--amber);} .stat-card .num.coral{color:var(--coral);}
+  .stat-card .num.sage{color:var(--sage);} .stat-card .num.sky{color:var(--sky);}
+
+  .seg-tabs{display:flex;gap:6px;background:rgba(255,255,255,.04);padding:4px;border-radius:12px;margin-bottom:14px;}
+  .seg-tabs button{flex:1;border:none;background:none;color:var(--muted);font-size:12.5px;font-weight:700;
+    padding:8px 0;border-radius:9px;font-family:inherit;}
+  .seg-tabs button.active{background:var(--card-brd);color:var(--ink);background:rgba(255,255,255,.09);}
+
+  .bars{display:flex;align-items:flex-end;gap:5px;height:130px;padding-top:8px;}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .bar{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--amber),var(--coral));min-height:3px;}
+  .bar.over{background:linear-gradient(180deg,var(--coral),var(--danger));}
+  .bar-date{font-size:8.5px;color:var(--faint);margin-top:6px;}
+
+  .donut-row{display:flex;align-items:center;gap:22px;}
+  .donut{width:96px;height:96px;border-radius:50%;flex-shrink:0;}
+  .donut-legend{flex:1;display:flex;flex-direction:column;gap:9px;}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:13px;}
+  .legend-dot{width:9px;height:9px;border-radius:50%;}
+  .legend-item b{margin-left:auto;font-family:ui-monospace,monospace;font-size:12.5px;color:var(--muted);}
+
+  .weight-chart{width:100%;height:110px;}
+
+  /* --- settings --- */
+  .field{margin-bottom:16px;}
+  .field .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    display:block;margin-bottom:6px;font-weight:600;}
+  .field input{width:100%;font-family:inherit;font-size:15px;padding:11px 13px;border-radius:var(--r-sm);
+    border:1px solid var(--card-brd);background:rgba(255,255,255,.03);color:var(--ink);}
+  .field input:focus{outline:none;border-color:var(--amber);}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+  .unit-toggle{display:flex;background:rgba(255,255,255,.05);border-radius:10px;padding:3px;}
+  .unit-toggle button{flex:1;border:none;background:none;color:var(--muted);font-weight:700;font-size:13px;
+    padding:9px 0;border-radius:8px;font-family:inherit;}
+  .unit-toggle button.active{background:var(--amber);color:#1A1408;}
+  .btnrow{display:flex;gap:10px;margin-top:4px;}
+  .btn-primary{flex:1;background:linear-gradient(135deg,var(--amber),var(--coral));color:#1A1408;border:none;
+    padding:13px 16px;border-radius:var(--r-sm);font-weight:800;font-size:14.5px;}
+  .btn-danger{width:100%;background:rgba(226,96,74,.12);border:1px solid rgba(226,96,74,.35);color:var(--danger);
+    padding:12px 16px;border-radius:var(--r-sm);font-weight:700;font-size:13.5px;margin-top:6px;}
+  .settings-foot{text-align:center;color:var(--faint);font-size:11.5px;margin-top:18px;line-height:1.6;}
+
+  /* --- tab bar --- */
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;
+    padding-bottom:env(safe-area-inset-bottom);}
+  .tabbar-inner{display:flex;gap:4px;background:rgba(24,27,36,.78);backdrop-filter:blur(24px) saturate(160%);
+    border:1px solid var(--card-brd);border-radius:20px;padding:8px;margin:0 18px 12px;max-width:444px;width:calc(100% - 36px);}
+  .tabbtn{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:8px 0 6px;border-radius:14px;color:var(--faint);font-family:inherit;font-size:10.5px;font-weight:700;}
+  .tabbtn.active{color:var(--ink);background:rgba(255,255,255,.06);}
+  .tabbtn.active svg{color:var(--amber);}
+  .tabbtn svg{stroke-width:2;}
+</style>
+</head>
+<body>
+<div class="wrap" id="view"></div>
+
+<nav class="tabbar"><div class="tabbar-inner" id="tabbar"></div></nav>
+
+<script>
+const STORE_KEY = "liftup-data-v1";
+const DEFAULT = {
+  settings:{calorieGoal:2200, proteinGoal:150, carbGoal:220, fatGoal:70, weightUnit:"kg"},
+  food:[], workouts:[], weights:[]
+};
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return Object.assign(structuredClone(DEFAULT), JSON.parse(raw));
+    // migrate from earlier prototypes if present
+    const older = localStorage.getItem("ledger-data-v2") || localStorage.getItem("ledger-data-v1");
+    if(older){
+      const o = JSON.parse(older);
+      return {
+        settings:{calorieGoal:o.settings?.calorieGoal||2200, proteinGoal:o.settings?.proteinGoal||150,
+          carbGoal:o.settings?.carbGoal||220, fatGoal:o.settings?.fatGoal||70, weightUnit:o.settings?.weightUnit||"kg"},
+        food:o.food||[], workouts:o.workouts||[], weights:o.weights||[]
+      };
+    }
+    return structuredClone(DEFAULT);
+  }catch(e){ return structuredClone(DEFAULT); }
+}
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+
+let data = load();
+let view = "today";
+let statsRange = 7;
+let date = todayISO();
+
+function todayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function addDays(iso,n){
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  dt.setDate(dt.getDate()+n);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+}
+function fmtDate(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}); }
+function fmtShort(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleDateString("en-GB",{day:"numeric",month:"short"}); }
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function kgToDisplay(kg){ return data.settings.weightUnit==="lb" ? Math.round(kg*2.20462*10)/10 : kg; }
+function displayToKg(v){ return data.settings.weightUnit==="lb" ? Math.round((v/2.20462)*10)/10 : v; }
+
+const ICONS = {
+  today:'<path d="M4 10.5V19a1 1 0 0 0 1 1h4v-5h6v5h4a1 1 0 0 0 1-1v-8.5"/><path d="M2 11l10-8 10 8"/>',
+  stats:'<path d="M4 20V10"/><path d="M11 20V4"/><path d="M18 20v-7"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15z"/>',
+  chevL:'<path d="M15 18l-6-6 6-6"/>', chevR:'<path d="M9 18l6-6-6-6"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 17a2.5 2.5 0 0 0 2.5-2.5c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7.5 7.5 0 1 1-15 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  dumbbell:'<path d="M6.5 6.5l11 11"/><path d="M21 21l-1-1"/><path d="M3 3l1 1"/><path d="M18 22l-2-2"/><path d="M2 6l2-2"/><path d="M7.5 3.5l-4 4"/><path d="M20.5 16.5l-4 4"/><path d="M6 6l-2.5-1.5-1 1L4 8"/>',
+  scale:'<path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+};
+function icon(name, cls){ return `<svg class="icon ${cls||''}" viewBox="0 0 24 24">${ICONS[name]}</svg>`; }
+
+function render(){
+  const el = document.getElementById("view");
+  if(view==="today") el.innerHTML = renderToday();
+  else if(view==="stats") el.innerHTML = renderStats();
+  else el.innerHTML = renderSettings();
+  renderTabbar();
+  attachHandlers();
+}
+
+function renderTabbar(){
+  const tabs = [["today","Today","today"],["stats","Stats","stats"],["settings","Settings","settings"]];
+  document.getElementById("tabbar").innerHTML = tabs.map(([id,label,ic])=>
+    `<button class="tabbtn ${view===id?'active':''}" data-tab="${id}">${icon(ic)}<span>${label}</span></button>`
+  ).join('');
+  document.querySelectorAll(".tabbtn").forEach(b=>{
+    b.onclick = ()=>{ view=b.dataset.tab; render(); };
+  });
+}
+
+function dayTotals(d){
+  const f = data.food.filter(e=>e.date===d);
+  const w = data.workouts.filter(x=>x.date===d);
+  return {
+    eaten: f.reduce((s,e)=>s+Number(e.calories||0),0),
+    protein: f.reduce((s,e)=>s+Number(e.protein||0),0),
+    carbs: f.reduce((s,e)=>s+Number(e.carbs||0),0),
+    fat: f.reduce((s,e)=>s+Number(e.fat||0),0),
+    burned: w.reduce((s,x)=>s+Number(x.calories||0),0),
+    workouts: w.length,
+  };
+}
+
+function renderToday(){
+  const t = dayTotals(date);
+  const s = data.settings;
+  const net = t.eaten - t.burned;
+  const pct = Math.max(0, Math.min(1, net / s.calorieGoal));
+  const over = net > s.calorieGoal;
+  const r=48, c=2*Math.PI*r, dash = pct*c;
+  const isToday = date===todayISO();
+  const dayWeight = data.weights.find(w=>w.date===date);
+  const dayFood = data.food.filter(e=>e.date===date);
+  const dayWorkouts = data.workouts.filter(w=>w.date===date);
+
+  const macro = (label,val,goal,color)=>`
+    <div class="macro-row">
+      <div class="macro-dot" style="background:${color}"></div>
+      <div class="macro-label">${label}</div>
+      <div class="macro-track"><div class="macro-fill" style="width:${goal?Math.min(100,(val/goal)*100):0}%;background:${color}"></div></div>
+      <div class="macro-val">${val}${goal?`/${goal}g`:'g'}</div>
+    </div>`;
+
+  return `
+  <header class="top">
+    <div class="eyebrow">Liftup</div>
+    <h1 class="pagetitle">Today</h1>
+  </header>
+
+  <div class="datebar">
+    <button id="prevDay">${icon('chevL')}</button>
+    <div class="datelabel"><b>${fmtDate(date)}</b>${isToday?'<span class="badge-today">today</span>':''}</div>
+    <button id="nextDay" ${isToday?'disabled':''}>${icon('chevR')}</button>
+  </div>
+
+  <div class="card summary">
+    <div class="dial-wrap">
+      <svg width="118" height="118" viewBox="0 0 118 118">
+        <defs><linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="var(--amber)"/><stop offset="100%" stop-color="var(--coral)"/>
+        </linearGradient></defs>
+        <circle cx="59" cy="59" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
+        <circle cx="59" cy="59" r="${r}" fill="none" stroke="${over?'var(--danger)':'url(#dialGrad)'}" stroke-width="9"
+          stroke-dasharray="${dash} ${c}" stroke-linecap="round" transform="rotate(-90 59 59)"/>
+      </svg>
+      <div class="dial-num"><b>${net}</b><span>of ${s.calorieGoal}</span></div>
+    </div>
+    <div class="macros">
+      ${macro('Protein', t.protein, s.proteinGoal, 'var(--sage)')}
+      ${macro('Carbs', t.carbs, s.carbGoal, 'var(--amber)')}
+      ${macro('Fat', t.fat, s.fatGoal, 'var(--coral)')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">${icon('flame')} Food</div>
+    ${dayFood.length===0 ? '<p class="empty">Nothing logged yet today.</p>' : `<ul class="ledger">
+      ${dayFood.map(e=>`<li>
+        <div class="li-left"><b>${esc(e.name)}</b></div>
+        <div class="li-right"><span>${e.calories} kcal${e.protein?` · P${e.protein}`:''}${e.carbs?` · C${e.carbs}`:''}${e.fat?` · F${e.fat}`:''}</span>
+        <button data-remove-food="${e.id}">${icon('trash')}</button></div>
+      </li>`).join('')}
+    </ul>`}
+    <form class="entry" id="foodForm">
+      <input class="fname" name="name" placeholder="What did you eat?" required>
+      <input class="fnum" name="calories" type="number" inputmode="numeric" placeholder="kcal" required>
+      <input class="fnum" name="protein" type="number" inputmode="numeric" placeholder="P g">
+      <input class="fnum" name="carbs" type="number" inputmode="numeric" placeholder="C g">
+      <input class="fnum" name="fat" type="number" inputmode="numeric" placeholder="F g">
+      <button type="submit" class="addbtn">${icon('plus')}</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="section-title workout">${icon('dumbbell')} Training</div>
+    ${dayWorkouts.length===0 ? '<p class="empty">No training logged today.</p>' : `<ul class="ledger">
+      ${dayWorkouts.map(w=>`<li>
+        <div class="li-left"><b>${esc(w.name)}</b>${w.notes?`<small>${esc(w.notes)}</small>`:''}</div>
+        <div class="li-right"><span>${[w.duration?`${w.duration} min`:null, w.calories?`${w.calories} kcal`:null].filter(Boolean).join(' · ')}</span>
+        <button data-remove-workout="${w.id}">${icon('trash')}</button></div>
+      </li>`).join('')}
+    </ul>`}
+    <form class="entry" id="workoutForm">
+      <input class="fname" name="name" placeholder="Exercise" required>
+      <input class="fnum" name="duration" type="number" inputmode="numeric" placeholder="min">
+      <input class="fnum" name="calories" type="number" inputmode="numeric" placeholder="kcal">
+      <input class="fname" name="notes" placeholder="notes (optional)">
+      <button type="submit" class="addbtn">${icon('plus')}</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="section-title weight">${icon('scale')} Weight</div>
+    ${dayWeight
+      ? `<div class="weight-display">${kgToDisplay(dayWeight.weight)} <span>${s.weightUnit}</span></div>`
+      : `<form class="entry" id="weightForm">
+          <input class="fnum" style="flex:1" name="weight" type="number" step="0.1" inputmode="decimal" placeholder="${s.weightUnit} today" required>
+          <button type="submit" class="addbtn">${icon('plus')}</button>
+        </form>`}
+  </div>
+  `;
+}
+
+function computeStreak(){
+  let streak=0, d=todayISO();
+  while(true){
+    const has = data.food.some(e=>e.date===d) || data.workouts.some(w=>w.date===d);
+    if(!has) break;
+    streak++; d=addDays(d,-1);
+  }
+  return streak;
+}
+
+function renderStats(){
+  const days=[];
+  for(let i=statsRange-1;i>=0;i--){
+    const d=addDays(todayISO(),-i);
+    const t = dayTotals(d);
+    days.push({date:d, net:t.eaten-t.burned, ...t});
+  }
+  const s = data.settings;
+  const maxVal = Math.max(s.calorieGoal, ...days.map(d=>d.net), 1);
+  const avgNet = Math.round(days.reduce((a,d)=>a+d.net,0)/days.length) || 0;
+  const totalWorkouts = days.reduce((a,d)=>a+d.workouts,0);
+  const streak = computeStreak();
+
+  const wInRange = data.weights.filter(w=>w.date>=addDays(todayISO(),-(statsRange-1)));
+  let weightDelta = null;
+  if(wInRange.length>=2){
+    weightDelta = Math.round((kgToDisplay(wInRange[wInRange.length-1].weight)-kgToDisplay(wInRange[0].weight))*10)/10;
+  }
+
+  const totProtein = days.reduce((a,d)=>a+d.protein,0);
+  const totCarbs = days.reduce((a,d)=>a+d.carbs,0);
+  const totFat = days.reduce((a,d)=>a+d.fat,0);
+  const macroSum = totProtein+totCarbs+totFat || 1;
+  const pPct = Math.round(totProtein/macroSum*100), cPct = Math.round(totCarbs/macroSum*100), fPct=100-pPct-cPct;
+  const donutStyle = `background:conic-gradient(var(--sage) 0 ${pPct}%, var(--amber) ${pPct}% ${pPct+cPct}%, var(--coral) ${pPct+cPct}% 100%);`;
+
+  const weightPoints = data.weights.slice(-statsRange);
+  let chartSvg = '';
+  if(weightPoints.length>=2){
+    const vals = weightPoints.map(w=>kgToDisplay(w.weight));
+    const min=Math.min(...vals), max=Math.max(...vals), range=(max-min)||1;
+    const W=300,H=100,pad=8;
+    const pts = vals.map((v,i)=>{
+      const x = pad + (i/(vals.length-1))*(W-pad*2);
+      const y = H-pad - ((v-min)/range)*(H-pad*2);
+      return [x,y];
+    });
+    const line = pts.map(p=>p.join(',')).join(' ');
+    const area = `${pad},${H-pad} ${line} ${W-pad},${H-pad}`;
+    chartSvg = `<svg class="weight-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <defs><linearGradient id="wgrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--sky)" stop-opacity=".35"/><stop offset="100%" stop-color="var(--sky)" stop-opacity="0"/>
+      </linearGradient></defs>
+      <polygon points="${area}" fill="url(#wgrad)"/>
+      <polyline points="${line}" fill="none" stroke="var(--sky)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      ${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="var(--sky)"/>`).join('')}
+    </svg>`;
+  }
+
+  return `
+  <header class="top">
+    <div class="eyebrow">Overview</div>
+    <h1 class="pagetitle">Stats</h1>
+  </header>
+
+  <div class="seg-tabs">
+    <button data-range="7" class="${statsRange===7?'active':''}">7 days</button>
+    <button data-range="30" class="${statsRange===30?'active':''}">30 days</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="num amber">${streak}</div><div class="lbl">Day streak</div></div>
+    <div class="stat-card"><div class="num coral">${avgNet}</div><div class="lbl">Avg net kcal</div></div>
+    <div class="stat-card"><div class="num sage">${totalWorkouts}</div><div class="lbl">Workouts</div></div>
+    <div class="stat-card"><div class="num sky">${weightDelta===null?'—':(weightDelta>0?'+':'')+weightDelta}</div><div class="lbl">Weight Δ ${s.weightUnit}</div></div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:14px;margin-bottom:4px;">Net calories</h3>
+    <div class="bars">
+      ${days.map(d=>`<div class="bar-col">
+        <div class="bar ${d.net>s.calorieGoal?'over':''}" style="height:${Math.max(2,(d.net/maxVal)*118)}px;"></div>
+        ${statsRange<=7?`<div class="bar-date">${fmtShort(d.date).split(' ')[0]}</div>`:''}
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:14px;margin-bottom:14px;">Macro balance</h3>
+    <div class="donut-row">
+      <div class="donut" style="${donutStyle}"></div>
+      <div class="donut-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:var(--sage)"></span>Protein<b>${pPct}%</b></div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span>Carbs<b>${cPct}%</b></div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--coral)"></span>Fat<b>${fPct}%</b></div>
+      </div>
+    </div>
+  </div>
+
+  ${weightPoints.length>=2 ? `<div class="card">
+    <h3 style="font-size:14px;margin-bottom:10px;">Weight trend</h3>
+    ${chartSvg}
+  </div>` : ''}
+  `;
+}
+
+function renderSettings(){
+  const s = data.settings;
+  return `
+  <header class="top">
+    <div class="eyebrow">Preferences</div>
+    <h1 class="pagetitle">Settings</h1>
+  </header>
+
+  <form class="card" id="settingsForm">
+    <h3 style="font-size:14px;margin-bottom:14px;">Daily goals</h3>
+    <div class="field"><span class="lbl">Calorie goal (kcal)</span>
+      <input name="calorieGoal" type="number" value="${s.calorieGoal}"></div>
+    <div class="field-row">
+      <div class="field"><span class="lbl">Protein (g)</span><input name="proteinGoal" type="number" value="${s.proteinGoal}"></div>
+      <div class="field"><span class="lbl">Carbs (g)</span><input name="carbGoal" type="number" value="${s.carbGoal}"></div>
+      <div class="field"><span class="lbl">Fat (g)</span><input name="fatGoal" type="number" value="${s.fatGoal}"></div>
+    </div>
+    <div class="field">
+      <span class="lbl">Weight unit</span>
+      <div class="unit-toggle">
+        <button type="button" data-unit="kg" class="${s.weightUnit==='kg'?'active':''}">kg</button>
+        <button type="button" data-unit="lb" class="${s.weightUnit==='lb'?'active':''}">lb</button>
+      </div>
+    </div>
+    <div class="btnrow"><button type="submit" class="btn-primary">Save changes</button></div>
+  </form>
+
+  <div class="card">
+    <h3 style="font-size:14px;margin-bottom:6px;">Data</h3>
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 4px;">Everything is stored only on this device, in this browser. Nothing is sent anywhere.</p>
+    <button class="btn-danger" id="resetBtn">Erase all data</button>
+  </div>
+
+  <div class="settings-foot">Liftup · personal tracker</div>
+  `;
+}
+
+function attachHandlers(){
+  if(view==="today"){
+    document.getElementById("prevDay").onclick = ()=>{ date=addDays(date,-1); render(); };
+    const nextBtn = document.getElementById("nextDay");
+    if(nextBtn) nextBtn.onclick = ()=>{ date=addDays(date,1); render(); };
+
+    const foodForm = document.getElementById("foodForm");
+    if(foodForm) foodForm.onsubmit = (e)=>{
+      e.preventDefault();
+      const f = new FormData(foodForm);
+      data.food.push({id:uid(), date, name:f.get("name"), calories:Number(f.get("calories")||0),
+        protein:Number(f.get("protein")||0), carbs:Number(f.get("carbs")||0), fat:Number(f.get("fat")||0)});
+      save(); render();
+    };
+    const workoutForm = document.getElementById("workoutForm");
+    if(workoutForm) workoutForm.onsubmit = (e)=>{
+      e.preventDefault();
+      const f = new FormData(workoutForm);
+      data.workouts.push({id:uid(), date, name:f.get("name"), duration:Number(f.get("duration")||0),
+        calories:Number(f.get("calories")||0), notes:f.get("notes")||""});
+      save(); render();
+    };
+    const weightForm = document.getElementById("weightForm");
+    if(weightForm) weightForm.onsubmit = (e)=>{
+      e.preventDefault();
+      const f = new FormData(weightForm);
+      const kg = displayToKg(Number(f.get("weight")));
+      data.weights = data.weights.filter(w=>w.date!==date);
+      data.weights.push({date, weight:kg});
+      data.weights.sort((a,b)=>a.date.localeCompare(b.date));
+      save(); render();
+    };
+    document.querySelectorAll("[data-remove-food]").forEach(btn=>{
+      btn.onclick = ()=>{ data.food = data.food.filter(e=>e.id!==btn.dataset.removeFood); save(); render(); };
+    });
+    document.querySelectorAll("[data-remove-workout]").forEach(btn=>{
+      btn.onclick = ()=>{ data.workouts = data.workouts.filter(w=>w.id!==btn.dataset.removeWorkout); save(); render(); };
+    });
+  }
+
+  if(view==="stats"){
+    document.querySelectorAll("[data-range]").forEach(btn=>{
+      btn.onclick = ()=>{ statsRange = Number(btn.dataset.range); render(); };
+    });
+  }
+
+  if(view==="settings"){
+    document.getElementById("settingsForm").onsubmit = (e)=>{
+      e.preventDefault();
+      const f = new FormData(e.target);
+      data.settings.calorieGoal = Number(f.get("calorieGoal")||2200);
+      data.settings.proteinGoal = Number(f.get("proteinGoal")||0);
+      data.settings.carbGoal = Number(f.get("carbGoal")||0);
+      data.settings.fatGoal = Number(f.get("fatGoal")||0);
+      save(); render();
+    };
+    document.querySelectorAll("[data-unit]").forEach(btn=>{
+      btn.onclick = ()=>{ data.settings.weightUnit = btn.dataset.unit; save(); render(); };
+    });
+    const resetBtn = document.getElementById("resetBtn");
+    if(resetBtn) resetBtn.onclick = ()=>{
+      if(confirm("Erase all logged food, workouts and weight entries? This can't be undone.")){
+        data = structuredClone(DEFAULT); save(); render();
+      }
+    };
+  }
+}
+
+render();
+</script>
+</body>
+</html>
