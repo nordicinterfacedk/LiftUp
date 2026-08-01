@@ -17,16 +17,21 @@
     --bg:#121316; --surface:#1A1B20; --surface2:#212228;
     --border:rgba(255,255,255,.07); --border-soft:rgba(255,255,255,.045);
     --ink:#F2F1ED; --muted:#93939C; --faint:#55555F;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 32px rgba(0,0,0,.32);
   }
   html[data-mode="light"]{
     --bg:#FAF8F3; --surface:#F1EDE3; --surface2:#E9E4D6;
     --border:rgba(20,16,8,.09); --border-soft:rgba(20,16,8,.055);
     --ink:#211C13; --muted:#78715F; --faint:#AEA48D;
+    --shadow:0 1px 2px rgba(20,16,8,.05), 0 14px 26px rgba(20,16,8,.07);
   }
   html[data-theme="amber"]{ --accent:#E7A550; --accent-ink:#241905; --accent-dim:rgba(231,165,80,.14); --accent-shadow:rgba(231,165,80,.35); }
   html[data-theme="ocean"]{ --accent:#5FB6D8; --accent-ink:#052029; --accent-dim:rgba(95,182,216,.14); --accent-shadow:rgba(95,182,216,.35); }
   html[data-theme="sage"]{ --accent:#86C296; --accent-ink:#0C2013; --accent-dim:rgba(134,194,150,.14); --accent-shadow:rgba(134,194,150,.35); }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;
+    transition:background-color .2s ease, border-color .2s ease, color .2s ease, transform .12s ease, opacity .15s ease, box-shadow .2s ease;}
+  button:active{transform:scale(.94);}
+  button{cursor:pointer;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
     -webkit-font-smoothing:antialiased; overscroll-behavior-y:none; transition:background .2s,color .2s;}
@@ -37,6 +42,18 @@
     padding-right:max(20px, env(safe-area-inset-right));
     padding-bottom:calc(112px + env(safe-area-inset-bottom));
   }
+  #view > *{animation:itemIn .5s cubic-bezier(.16,1,.3,1) both;}
+  #view > *:nth-child(1){animation-delay:.01s;} #view > *:nth-child(2){animation-delay:.05s;}
+  #view > *:nth-child(3){animation-delay:.09s;} #view > *:nth-child(4){animation-delay:.13s;}
+  #view > *:nth-child(5){animation-delay:.17s;} #view > *:nth-child(6){animation-delay:.21s;}
+  #view > *:nth-child(7){animation-delay:.25s;} #view > *:nth-child(8){animation-delay:.29s;}
+  #view > *:nth-child(9){animation-delay:.33s;} #view > *:nth-child(10){animation-delay:.37s;}
+  #view > *:nth-child(n+11){animation-delay:.4s;}
+  @keyframes itemIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);}
+  .hero-card{padding:26px 20px 22px;margin-bottom:28px;}
+  .section-card{padding:4px 18px;}
+  .panel-card{padding:18px;}
   h1,h2,h3,h4{margin:0;}
   svg.icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block;}
 
@@ -56,8 +73,8 @@
   .badge-today{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:700;margin-top:2px;}
 
   /* --- hero --- */
-  .hero{display:flex;flex-direction:column;align-items:center;padding:6px 0 28px;}
-  .hero.small{padding:2px 0 22px;}
+  .hero{display:flex;flex-direction:column;align-items:center;padding:0;}
+  .hero.small{padding:0;}
   .ring-wrap{position:relative;width:176px;height:176px;}
   .ring-wrap.small{width:140px;height:140px;}
   .ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
@@ -98,10 +115,31 @@
   .rr span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
   .rr button{border:none;background:none;color:var(--faint);opacity:.55;padding:2px;display:flex;}
   .empty{color:var(--faint);font-size:14px;padding:14px 0 4px;}
+  .empty-state{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--faint);padding:24px 0;text-align:center;}
+  .empty-state svg{width:24px;height:24px;opacity:.45;}
+  .empty-state span{font-size:13px;}
+
+  .exercise-chip.chip-new{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);display:flex;align-items:center;gap:4px;}
+  .exercise-chip.chip-new svg{width:13px;height:13px;}
+  .save-toggle{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);padding:2px 2px 4px;}
+  .save-toggle input{width:17px;height:17px;accent-color:var(--accent);}
+
+  .pr-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-soft);}
+  .pr-row:last-child{border-bottom:none;}
+  .pr-row .pn{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;}
+  .pr-row .pn svg{width:14px;height:14px;color:var(--accent);}
+  .pr-row .pv{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+  .grow.link{cursor:pointer;}
+  .grow.link button{border:none;background:none;color:var(--accent);font-family:inherit;font-size:14.5px;
+    font-weight:600;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0;}
+  .grow.link svg{color:var(--accent);}
 
   .weight-row{display:flex;align-items:center;justify-content:space-between;padding-top:2px;}
+  .weight-row button{border:none;background:none;color:var(--faint);opacity:.55;padding:2px;display:flex;}
   .weight-val{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;}
   .weight-val span{font-size:12px;color:var(--muted);font-weight:400;margin-left:4px;}
+  .wdelta{font-size:12px;color:var(--muted);font-weight:600;margin-left:10px;}
 
   /* --- FAB --- */
   .fab{position:fixed;right:calc(20px + env(safe-area-inset-right));bottom:calc(98px + env(safe-area-inset-bottom));
@@ -155,7 +193,7 @@
     padding:9px 0;border-radius:8px;font-family:inherit;}
   .seg-tabs button.active{background:var(--accent);color:var(--accent-ink);}
 
-  .stat-line{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);
+  .stat-line{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);
     border-radius:var(--r-md);padding:16px 0;margin-bottom:22px;}
   .stat-line .s{flex:1;text-align:center;padding:0 2px;}
   .stat-line .s b{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;}
@@ -179,7 +217,7 @@
   /* --- settings --- */
   .glabel{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
     margin:0 0 8px 4px;}
-  .group{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:24px;overflow:hidden;}
+  .group{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:24px;overflow:hidden;box-shadow:var(--shadow);}
   .grow{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border-soft);}
   .grow:last-child{border-bottom:none;}
   .grow .glbl{font-size:14.5px;}
@@ -193,6 +231,8 @@
   .grow.danger{color:var(--danger);}
   .grow.danger button{border:none;background:none;color:var(--danger);font-family:inherit;font-size:14.5px;
     font-weight:600;width:100%;text-align:left;padding:0;}
+  .grow .glbl small{display:block;color:var(--muted);font-size:11.5px;font-weight:400;margin-top:1px;}
+  .grow .trash-btn{border:none;background:none;color:var(--faint);display:flex;padding:2px;flex-shrink:0;}
   .settings-foot{text-align:center;color:var(--faint);font-size:11.5px;margin-top:6px;line-height:1.6;}
 
   /* --- tab bar --- */
@@ -215,7 +255,7 @@
 <div class="sheet-backdrop" id="sheetBackdrop"></div>
 <div class="sheet" id="sheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-top"><h3>Add entry</h3>
+  <div class="sheet-top"><h3 id="sheetTitle">Add entry</h3>
     <button class="sheet-close" id="sheetClose">✕</button></div>
   <div class="seg" id="sheetSeg">
     <button data-kind="food" class="active">Food</button>
@@ -224,6 +264,7 @@
   </div>
   <div id="sheetBody"></div>
 </div>
+<input type="file" id="importFile" accept="application/json" style="display:none">
 
 <nav class="tabbar"><div class="tabbar-inner" id="tabbar"></div></nav>
 
@@ -231,7 +272,7 @@
 const STORE_KEY = "liftup-data-v1";
 const DEFAULT = {
   settings:{calorieGoal:2200, proteinGoal:150, carbGoal:220, fatGoal:70, weightUnit:"kg", theme:"amber", mode:"dark"},
-  food:[], workouts:[], weights:[]
+  food:[], workouts:[], weights:[], customFoods:[]
 };
 
 const EXERCISES = [
@@ -261,7 +302,8 @@ function load(){
       const parsed = JSON.parse(raw);
       return {
         settings: Object.assign(structuredClone(DEFAULT.settings), parsed.settings||{}),
-        food: parsed.food||[], workouts: parsed.workouts||[], weights: parsed.weights||[]
+        food: parsed.food||[], workouts: parsed.workouts||[], weights: parsed.weights||[],
+        customFoods: parsed.customFoods||[]
       };
     }
     const older = localStorage.getItem("ledger-data-v2") || localStorage.getItem("ledger-data-v1");
@@ -269,7 +311,7 @@ function load(){
       const o = JSON.parse(older);
       return {
         settings: Object.assign(structuredClone(DEFAULT.settings), o.settings||{}),
-        food:o.food||[], workouts:o.workouts||[], weights:o.weights||[]
+        food:o.food||[], workouts:o.workouts||[], weights:o.weights||[], customFoods:o.customFoods||[]
       };
     }
     return structuredClone(DEFAULT);
@@ -286,6 +328,8 @@ let view = "today";
 let statsRange = 7;
 let sheetKind = "food";
 let sheetExercise = null;
+let sheetFoodItem = null;
+let editingId = null;
 let date = todayISO();
 
 function todayISO(){
@@ -300,6 +344,13 @@ function addDays(iso,n){
 }
 function fmtDate(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}); }
 function fmtShort(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleDateString("en-GB",{day:"numeric",month:"short"}); }
+function greeting(){
+  const h = new Date().getHours();
+  if(h<5) return "Still up?";
+  if(h<12) return "Good morning";
+  if(h<18) return "Good afternoon";
+  return "Good evening";
+}
 function uid(){ return Math.random().toString(36).slice(2,10); }
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function kgToDisplay(kg){ return data.settings.weightUnit==="lb" ? Math.round(kg*2.20462*10)/10 : kg; }
@@ -315,6 +366,11 @@ const ICONS = {
   scale:'<path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
   trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
   check:'<path d="M20 6L9 17l-5-5"/>',
+  edit:'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/>',
+  repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/>',
+  upload:'<path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M4 3h16"/>',
+  award:'<circle cx="12" cy="8" r="6"/><path d="M9 13.5L6.5 21l5.5-3 5.5 3-2.5-7.5"/>',
 };
 function icon(name){ return `<svg class="icon" viewBox="0 0 24 24">${ICONS[name]}</svg>`; }
 applyTheme();
@@ -328,6 +384,24 @@ function render(){
   else el.innerHTML = renderSettings();
   renderTabbar();
   attachHandlers();
+  animateGrowables();
+}
+
+function animateGrowables(){
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('circle.progress').forEach(c=>{
+      c.style.transition = 'stroke-dasharray .7s cubic-bezier(.16,1,.3,1)';
+      c.style.strokeDasharray = `${c.dataset.dash} ${c.dataset.circ}`;
+    });
+    document.querySelectorAll('.bar[data-height]').forEach(b=>{
+      b.style.transition = 'height .55s cubic-bezier(.16,1,.3,1)';
+      b.style.height = b.dataset.height + 'px';
+    });
+    document.querySelectorAll('.mfill[data-width]').forEach(m=>{
+      m.style.transition = 'width .55s cubic-bezier(.16,1,.3,1)';
+      m.style.width = m.dataset.width + '%';
+    });
+  });
 }
 
 function renderTabbar(){
@@ -370,6 +444,57 @@ function workoutRight(w){
   return (main||'') + cal;
 }
 
+function recentFoods(){
+  const seen = new Set(), out = [];
+  for(let i=data.food.length-1;i>=0 && out.length<6;i--){
+    const f = data.food[i];
+    const key = f.name.trim().toLowerCase();
+    if(seen.has(key)) continue;
+    seen.add(key); out.push(f);
+  }
+  return out;
+}
+
+function personalRecords(){
+  const map = {};
+  data.workouts.forEach(w=>{
+    if(w.kind==='strength'){
+      const score = Number(w.weight||0)*1000 + Number(w.reps||0);
+      if(!map[w.exerciseId] || score>map[w.exerciseId].score) map[w.exerciseId] = {name:w.name, kind:'strength', weight:w.weight, reps:w.reps, score};
+    } else if(w.kind==='reps'){
+      const score = Number(w.reps||0)*10 + Number(w.sets||0);
+      if(!map[w.exerciseId] || score>map[w.exerciseId].score) map[w.exerciseId] = {name:w.name, kind:'reps', reps:w.reps, sets:w.sets, score};
+    }
+  });
+  return Object.values(map).sort((a,b)=>b.score-a.score).slice(0,6);
+}
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `liftup-backup-${todayISO()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+function importDataFromFile(file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const parsed = JSON.parse(reader.result);
+      if(!parsed || typeof parsed!=="object") throw new Error("bad format");
+      if(!confirm("Import this backup? It will replace all data currently on this device.")) return;
+      data = {
+        settings: Object.assign(structuredClone(DEFAULT.settings), parsed.settings||{}),
+        food: parsed.food||[], workouts: parsed.workouts||[], weights: parsed.weights||[]
+      };
+      save(); applyTheme(); render();
+      alert("Backup restored.");
+    }catch(e){ alert("Couldn't read that file — make sure it's a LiftUp backup."); }
+  };
+  reader.readAsText(file);
+}
+
 function dateNav(){
   const isToday = date===todayISO();
   return `<div class="datebar">
@@ -387,60 +512,90 @@ function renderToday(){
   const pct = Math.max(0, Math.min(1, net / s.calorieGoal));
   const over = net > s.calorieGoal;
   const r=78, c=2*Math.PI*r, dash = pct*c;
+  const isToday = date===todayISO();
   const dayWeight = data.weights.find(w=>w.date===date);
   const dayFood = data.food.filter(e=>e.date===date);
   const dayWorkouts = data.workouts.filter(w=>w.date===date);
 
+  const macroSum = t.protein+t.carbs+t.fat || 1;
+  const pPct = Math.round(t.protein/macroSum*100), cPct = Math.round(t.carbs/macroSum*100), fPct=100-pPct-cPct;
+
+  const priorWeight = data.weights.filter(w=>w.date<date).sort((a,b)=>b.date.localeCompare(a.date))[0];
+  let weightDelta = '';
+  if(dayWeight && priorWeight){
+    const d = Math.round((kgToDisplay(dayWeight.weight)-kgToDisplay(priorWeight.weight))*10)/10;
+    if(d!==0) weightDelta = `<span class="wdelta">${d>0?'▲':'▼'} ${Math.abs(d)}${s.weightUnit}</span>`;
+  }
+
   return `
   <div class="brand"><span>LiftUp</span></div>
-  <header class="top"><div><div class="eyebrow">Today's log</div><h1 class="pagetitle">Today</h1></div></header>
+  <header class="top"><div><div class="eyebrow">${isToday?greeting():'Looking back'}</div><h1 class="pagetitle">Today</h1></div></header>
   ${dateNav()}
 
-  <div class="hero">
-    <div class="ring-wrap">
-      <svg width="176" height="176" viewBox="0 0 176 176">
-        <circle cx="88" cy="88" r="${r}" fill="none" stroke="var(--surface)" stroke-width="10"/>
-        <circle cx="88" cy="88" r="${r}" fill="none" stroke="${over?'var(--danger)':'var(--accent)'}" stroke-width="10"
-          stroke-dasharray="${dash} ${c}" stroke-linecap="round" transform="rotate(-90 88 88)"/>
-      </svg>
-      <div class="ring-num"><b>${Math.abs(left)}</b><span>${over? 'kcal over':'kcal left'}</span></div>
+  <div class="card hero-card">
+    <div class="hero">
+      <div class="ring-wrap">
+        <svg width="176" height="176" viewBox="0 0 176 176">
+          <circle cx="88" cy="88" r="${r}" fill="none" stroke="var(--bg)" stroke-width="10"/>
+          <circle cx="88" cy="88" r="${r}" fill="none" stroke="${over?'var(--danger)':'var(--accent)'}" stroke-width="10"
+            class="progress" data-dash="${dash}" data-circ="${c}" stroke-dasharray="0 ${c}" stroke-linecap="round" transform="rotate(-90 88 88)"/>
+        </svg>
+        <div class="ring-num"><b>${Math.abs(left)}</b><span>${over? 'kcal over':'kcal left'}</span></div>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><b>${t.eaten}</b><span>Eaten</span></div>
+        <div class="hstat div"></div>
+        <div class="hstat"><b>${t.burned}</b><span>Burned</span></div>
+        <div class="hstat div"></div>
+        <div class="hstat"><b>${t.protein}g</b><span>Protein</span></div>
+      </div>
     </div>
-    <div class="hero-stats">
-      <div class="hstat"><b>${t.eaten}</b><span>Eaten</span></div>
-      <div class="hstat div"></div>
-      <div class="hstat"><b>${t.burned}</b><span>Burned</span></div>
-      <div class="hstat div"></div>
-      <div class="hstat"><b>${t.protein}g</b><span>Protein</span></div>
+    ${(t.protein||t.carbs||t.fat) ? `
+    <div class="macro-stack" style="margin-top:22px;">
+      <div style="width:${pPct}%;background:var(--accent);"></div>
+      <div style="width:${cPct}%;background:var(--muted);"></div>
+      <div style="width:${fPct}%;background:var(--faint);"></div>
     </div>
+    <div class="macro-legend"><span>Protein <b>${pPct}%</b></span><span>Carbs <b>${cPct}%</b></span><span>Fat <b>${fPct}%</b></span></div>
+    ` : ''}
   </div>
 
   <div class="section">
     <div class="section-head"><h3>${icon('flame')} Food</h3>
       <button class="addlink" data-open-sheet="food">+ Add</button></div>
-    ${dayFood.length===0 ? '<p class="empty">Nothing logged yet.</p>' : `<ul class="rows">
+    <div class="card section-card">
+    ${dayFood.length===0 ? `<div class="empty-state">${icon('flame')}<span>Nothing logged yet</span></div>` : `<ul class="rows">
       ${dayFood.map(e=>`<li>
         <div class="rl"><b>${esc(e.name)}</b>${(e.protein||e.carbs||e.fat)?`<small>${[e.protein?`P${e.protein}`:null,e.carbs?`C${e.carbs}`:null,e.fat?`F${e.fat}`:null].filter(Boolean).join(' · ')}</small>`:''}</div>
-        <div class="rr"><span>${e.calories} kcal</span><button data-remove-food="${e.id}">${icon('trash')}</button></div>
+        <div class="rr"><span>${e.calories} kcal</span>
+        <button data-edit-food="${e.id}">${icon('edit')}</button>
+        <button data-remove-food="${e.id}">${icon('trash')}</button></div>
       </li>`).join('')}
     </ul>`}
+    </div>
   </div>
 
   <div class="section">
     <div class="section-head"><h3>${icon('dumbbell')} Training</h3>
       <button class="addlink" data-open-sheet="workout">+ Add</button></div>
-    ${dayWorkouts.length===0 ? '<p class="empty">No training logged.</p>' : `<ul class="rows">
+    <div class="card section-card">
+    ${dayWorkouts.length===0 ? `<div class="empty-state">${icon('dumbbell')}<span>No training logged</span></div>` : `<ul class="rows">
       ${dayWorkouts.map(w=>`<li>
         <div class="rl"><b>${esc(w.name)}</b>${w.notes?`<small>${esc(w.notes)}</small>`:''}</div>
         <div class="rr"><span>${workoutRight(w)}</span>
+        <button data-edit-workout="${w.id}">${icon('edit')}</button>
         <button data-remove-workout="${w.id}">${icon('trash')}</button></div>
       </li>`).join('')}
     </ul>`}
+    </div>
   </div>
 
   <div class="section">
     <div class="section-head"><h3>${icon('scale')} Weight</h3>
       ${dayWeight?'':`<button class="addlink" data-open-sheet="weight">+ Add</button>`}</div>
-    ${dayWeight ? `<div class="weight-row"><div class="weight-val">${kgToDisplay(dayWeight.weight)}<span>${s.weightUnit}</span></div></div>` : '<p class="empty">Not logged today.</p>'}
+    <div class="card section-card">
+    ${dayWeight ? `<div class="weight-row"><div class="weight-val">${kgToDisplay(dayWeight.weight)}<span>${s.weightUnit}</span>${weightDelta}</div><button data-edit-weight="1">${icon('edit')}</button></div>` : `<div class="empty-state">${icon('scale')}<span>Not logged today</span></div>`}
+    </div>
   </div>
   `;
 }
@@ -464,7 +619,7 @@ function renderCalories(){
   const mrow = (label,val,goal,opacity)=>`
     <div class="mrow">
       <div class="mlabel">${label}</div>
-      <div class="mtrack"><div class="mfill" style="opacity:${opacity};width:${goal?Math.min(100,(val/goal)*100):0}%"></div></div>
+      <div class="mtrack"><div class="mfill" style="opacity:${opacity};width:0%" data-width="${goal?Math.min(100,(val/goal)*100):0}"></div></div>
       <div class="mval">${val}${goal?`/${goal}g`:'g'}</div>
     </div>`;
 
@@ -473,50 +628,60 @@ function renderCalories(){
   <header class="top"><div><div class="eyebrow">Nutrition</div><h1 class="pagetitle">Calories</h1></div></header>
   ${dateNav()}
 
-  <div class="hero small">
-    <div class="ring-wrap small">
-      <svg width="140" height="140" viewBox="0 0 140 140">
-        <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--surface)" stroke-width="9"/>
-        <circle cx="70" cy="70" r="${r}" fill="none" stroke="${over?'var(--danger)':'var(--accent)'}" stroke-width="9"
-          stroke-dasharray="${dash} ${c}" stroke-linecap="round" transform="rotate(-90 70 70)"/>
-      </svg>
-      <div class="ring-num"><b>${Math.abs(left)}</b><span>${over?'kcal over':'kcal left'}</span></div>
-    </div>
-    <div class="hero-stats">
-      <div class="hstat"><b>${t.eaten}</b><span>Eaten</span></div>
-      <div class="hstat div"></div>
-      <div class="hstat"><b>${s.calorieGoal}</b><span>Goal</span></div>
-      <div class="hstat div"></div>
-      <div class="hstat"><b>${t.burned}</b><span>Burned</span></div>
+  <div class="card hero-card">
+    <div class="hero small">
+      <div class="ring-wrap small">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--bg)" stroke-width="9"/>
+          <circle cx="70" cy="70" r="${r}" fill="none" stroke="${over?'var(--danger)':'var(--accent)'}" stroke-width="9"
+            class="progress" data-dash="${dash}" data-circ="${c}" stroke-dasharray="0 ${c}" stroke-linecap="round" transform="rotate(-90 70 70)"/>
+        </svg>
+        <div class="ring-num"><b>${Math.abs(left)}</b><span>${over?'kcal over':'kcal left'}</span></div>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><b>${t.eaten}</b><span>Eaten</span></div>
+        <div class="hstat div"></div>
+        <div class="hstat"><b>${s.calorieGoal}</b><span>Goal</span></div>
+        <div class="hstat div"></div>
+        <div class="hstat"><b>${t.burned}</b><span>Burned</span></div>
+      </div>
     </div>
   </div>
 
   <div class="macro-block">
     <h4>Macros</h4>
-    ${mrow('Protein', t.protein, s.proteinGoal, 1)}
-    ${mrow('Carbs', t.carbs, s.carbGoal, .65)}
-    ${mrow('Fat', t.fat, s.fatGoal, .4)}
+    <div class="card panel-card">
+      ${mrow('Protein', t.protein, s.proteinGoal, 1)}
+      ${mrow('Carbs', t.carbs, s.carbGoal, .65)}
+      ${mrow('Fat', t.fat, s.fatGoal, .4)}
+    </div>
   </div>
 
   <div class="panel">
     <h4>Last 7 days</h4>
-    <div class="bars">
-      ${days.map(d=>`<div class="bar-col">
-        <div class="bar ${d.net>s.calorieGoal?'over':''}" style="height:${Math.max(2,(d.net/maxVal)*110)}px;"></div>
-        <div class="bar-date">${fmtShort(d.date).split(' ')[0]}</div>
-      </div>`).join('')}
+    <div class="card panel-card">
+      <div class="bars">
+        ${days.map(d=>`<div class="bar-col">
+          <div class="bar ${d.net>s.calorieGoal?'over':''}" data-height="${Math.max(2,(d.net/maxVal)*110)}" style="height:0px;"></div>
+          <div class="bar-date">${fmtShort(d.date).split(' ')[0]}</div>
+        </div>`).join('')}
+      </div>
     </div>
   </div>
 
   <div class="section">
     <div class="section-head"><h3>${icon('flame')} Meals</h3>
       <button class="addlink" data-open-sheet="food">+ Add</button></div>
-    ${dayFood.length===0 ? '<p class="empty">Nothing logged yet.</p>' : `<ul class="rows">
+    <div class="card section-card">
+    ${dayFood.length===0 ? `<div class="empty-state">${icon('flame')}<span>Nothing logged yet</span></div>` : `<ul class="rows">
       ${dayFood.map(e=>`<li>
         <div class="rl"><b>${esc(e.name)}</b>${(e.protein||e.carbs||e.fat)?`<small>${[e.protein?`P${e.protein}`:null,e.carbs?`C${e.carbs}`:null,e.fat?`F${e.fat}`:null].filter(Boolean).join(' · ')}</small>`:''}</div>
-        <div class="rr"><span>${e.calories} kcal</span><button data-remove-food="${e.id}">${icon('trash')}</button></div>
+        <div class="rr"><span>${e.calories} kcal</span>
+        <button data-edit-food="${e.id}">${icon('edit')}</button>
+        <button data-remove-food="${e.id}">${icon('trash')}</button></div>
       </li>`).join('')}
     </ul>`}
+    </div>
   </div>
   `;
 }
@@ -524,6 +689,7 @@ function renderCalories(){
 function renderWorkouts(){
   const dayWorkouts = data.workouts.filter(w=>w.date===date);
   const wk = weekWorkoutStats();
+  const prs = personalRecords();
 
   const days = lastNDates(7).map(d=>{
     const items = data.workouts.filter(w=>w.date===d);
@@ -546,24 +712,39 @@ function renderWorkouts(){
 
   <div class="panel">
     <h4>Calories burned — last 7 days</h4>
-    <div class="bars">
-      ${days.map(d=>`<div class="bar-col">
-        <div class="bar" style="height:${Math.max(2,(d.cal/maxVal)*110)}px;"></div>
-        <div class="bar-date">${fmtShort(d.date).split(' ')[0]}</div>
-      </div>`).join('')}
+    <div class="card panel-card">
+      <div class="bars">
+        ${days.map(d=>`<div class="bar-col">
+          <div class="bar" data-height="${Math.max(2,(d.cal/maxVal)*110)}" style="height:0px;"></div>
+          <div class="bar-date">${fmtShort(d.date).split(' ')[0]}</div>
+        </div>`).join('')}
+      </div>
     </div>
   </div>
+
+  ${prs.length>0 ? `<div class="panel">
+    <h4>Personal bests</h4>
+    <div class="card panel-card">
+      ${prs.map(p=>`<div class="pr-row">
+        <div class="pn">${icon('award')} ${esc(p.name)}</div>
+        <div class="pv">${p.kind==='strength' ? `${p.weight}kg × ${p.reps}` : `${p.sets}×${p.reps}`}</div>
+      </div>`).join('')}
+    </div>
+  </div>` : ''}
 
   <div class="section">
     <div class="section-head"><h3>${icon('dumbbell')} Sessions</h3>
       <button class="addlink" data-open-sheet="workout">+ Add</button></div>
-    ${dayWorkouts.length===0 ? '<p class="empty">No training logged.</p>' : `<ul class="rows">
+    <div class="card section-card">
+    ${dayWorkouts.length===0 ? `<div class="empty-state">${icon('dumbbell')}<span>No training logged</span></div>` : `<ul class="rows">
       ${dayWorkouts.map(w=>`<li>
         <div class="rl"><b>${esc(w.name)}</b>${w.notes?`<small>${esc(w.notes)}</small>`:''}</div>
         <div class="rr"><span>${workoutRight(w)}</span>
+        <button data-edit-workout="${w.id}">${icon('edit')}</button>
         <button data-remove-workout="${w.id}">${icon('trash')}</button></div>
       </li>`).join('')}
     </ul>`}
+    </div>
   </div>
   `;
 }
@@ -637,27 +818,31 @@ function renderStats(){
 
   <div class="panel">
     <h4>Net calories</h4>
-    <div class="bars">
-      ${days.map(d=>`<div class="bar-col">
-        <div class="bar ${d.net>s.calorieGoal?'over':''}" style="height:${Math.max(2,(d.net/maxVal)*110)}px;"></div>
-        ${statsRange<=7?`<div class="bar-date">${fmtShort(d.date).split(' ')[0]}</div>`:''}
-      </div>`).join('')}
+    <div class="card panel-card">
+      <div class="bars">
+        ${days.map(d=>`<div class="bar-col">
+          <div class="bar ${d.net>s.calorieGoal?'over':''}" data-height="${Math.max(2,(d.net/maxVal)*110)}" style="height:0px;"></div>
+          ${statsRange<=7?`<div class="bar-date">${fmtShort(d.date).split(' ')[0]}</div>`:''}
+        </div>`).join('')}
+      </div>
     </div>
   </div>
 
   <div class="panel">
     <h4>Macro balance</h4>
-    <div class="macro-stack">
-      <div style="width:${pPct}%;background:var(--accent);"></div>
-      <div style="width:${cPct}%;background:var(--muted);"></div>
-      <div style="width:${fPct}%;background:var(--faint);"></div>
-    </div>
-    <div class="macro-legend">
-      <span>Protein <b>${pPct}%</b></span><span>Carbs <b>${cPct}%</b></span><span>Fat <b>${fPct}%</b></span>
+    <div class="card panel-card">
+      <div class="macro-stack">
+        <div style="width:${pPct}%;background:var(--accent);"></div>
+        <div style="width:${cPct}%;background:var(--muted);"></div>
+        <div style="width:${fPct}%;background:var(--faint);"></div>
+      </div>
+      <div class="macro-legend">
+        <span>Protein <b>${pPct}%</b></span><span>Carbs <b>${cPct}%</b></span><span>Fat <b>${fPct}%</b></span>
+      </div>
     </div>
   </div>
 
-  ${weightPoints.length>=2 ? `<div class="panel"><h4>Weight trend</h4>${chartSvg}</div>` : ''}
+  ${weightPoints.length>=2 ? `<div class="panel"><h4>Weight trend</h4><div class="card panel-card">${chartSvg}</div></div>` : ''}
   `;
 }
 
@@ -702,6 +887,12 @@ function renderSettings(){
     </div>
   </div>
 
+  <div class="glabel">Backup</div>
+  <div class="group">
+    <div class="grow link"><button id="exportBtn">Export data ${icon('download')}</button></div>
+    <div class="grow link"><button id="importBtn">Import data ${icon('upload')}</button></div>
+  </div>
+
   <div class="glabel">Data</div>
   <div class="group">
     <div class="grow danger"><button id="resetBtn">Erase all data</button></div>
@@ -711,52 +902,61 @@ function renderSettings(){
   `;
 }
 
-function sheetFormHTML(kind){
-  if(kind==="food") return `
-    <div class="sheet-form">
-      <input name="name" placeholder="What did you eat?" required>
-      <input name="calories" type="number" inputmode="numeric" placeholder="Calories (kcal)" required>
+function sheetFormHTML(kind, prefill){
+  const p = prefill || {};
+  const v = (x)=> x===undefined||x===null||x===0 ? '' : x;
+  if(kind==="food"){
+    const recents = !editingId ? recentFoods() : [];
+    return `
+    ${recents.length>0 ? `<div class="recent-label">Recent</div>
+      <div class="recent-chips">${recents.map(r=>`<button type="button" class="recent-chip" data-recent-food="${r.id}">${esc(r.name)}<span>${r.calories} kcal</span></button>`).join('')}</div>` : ''}
+    <form id="sheetForm" class="sheet-form">
+      <input name="name" placeholder="What did you eat?" value="${esc(v(p.name))}" required>
+      <input name="calories" type="number" inputmode="numeric" placeholder="Calories (kcal)" value="${v(p.calories)}" required>
       <div class="frow">
-        <input name="protein" type="number" inputmode="numeric" placeholder="Protein g">
-        <input name="carbs" type="number" inputmode="numeric" placeholder="Carbs g">
-        <input name="fat" type="number" inputmode="numeric" placeholder="Fat g">
+        <input name="protein" type="number" inputmode="numeric" placeholder="Protein g" value="${v(p.protein)}">
+        <input name="carbs" type="number" inputmode="numeric" placeholder="Carbs g" value="${v(p.carbs)}">
+        <input name="fat" type="number" inputmode="numeric" placeholder="Fat g" value="${v(p.fat)}">
       </div>
-      <button type="submit" class="sheet-submit">Add food</button>
-    </div>`;
+      <button type="submit" class="sheet-submit">${editingId?'Save changes':'Add food'}</button>
+    </form>`;
+  }
   return `
-    <div class="sheet-form">
-      <input name="weight" type="number" step="0.1" inputmode="decimal" placeholder="Weight (${data.settings.weightUnit})" required>
+    <form id="sheetForm" class="sheet-form">
+      <input name="weight" type="number" step="0.1" inputmode="decimal" placeholder="Weight (${data.settings.weightUnit})" value="${v(p.weight)}" required>
       <button type="submit" class="sheet-submit">Save weight</button>
-    </div>`;
+    </form>`;
 }
 
-function exerciseFieldsHTML(ex){
+function exerciseFieldsHTML(ex, prefill){
+  const p = prefill || {};
+  const v = (x)=> x===undefined||x===null||x===0 ? '' : x;
   if(ex.kind==='reps') return `
     <div class="frow">
-      <input name="sets" type="number" inputmode="numeric" placeholder="Sets" required>
-      <input name="reps" type="number" inputmode="numeric" placeholder="Reps" required>
+      <input name="sets" type="number" inputmode="numeric" placeholder="Sets" value="${v(p.sets)}" required>
+      <input name="reps" type="number" inputmode="numeric" placeholder="Reps" value="${v(p.reps)}" required>
     </div>
-    <input name="calories" type="number" inputmode="numeric" placeholder="Calories burned (optional)">`;
+    <input name="calories" type="number" inputmode="numeric" placeholder="Calories burned (optional)" value="${v(p.calories)}">`;
   if(ex.kind==='strength') return `
     <div class="frow">
-      <input name="sets" type="number" inputmode="numeric" placeholder="Sets" required>
-      <input name="reps" type="number" inputmode="numeric" placeholder="Reps" required>
-      <input name="weight" type="number" inputmode="numeric" placeholder="kg">
+      <input name="sets" type="number" inputmode="numeric" placeholder="Sets" value="${v(p.sets)}" required>
+      <input name="reps" type="number" inputmode="numeric" placeholder="Reps" value="${v(p.reps)}" required>
+      <input name="weight" type="number" inputmode="numeric" placeholder="kg" value="${v(p.weight)}">
     </div>
-    <input name="calories" type="number" inputmode="numeric" placeholder="Calories burned (optional)">`;
+    <input name="calories" type="number" inputmode="numeric" placeholder="Calories burned (optional)" value="${v(p.calories)}">`;
   if(ex.kind==='cardio') return `
     <div class="frow">
-      <input name="duration" type="number" inputmode="numeric" placeholder="Minutes" required>
-      <input name="distance" type="number" step="0.1" inputmode="decimal" placeholder="km (optional)">
+      <input name="duration" type="number" inputmode="numeric" placeholder="Minutes" value="${v(p.duration)}" required>
+      <input name="distance" type="number" step="0.1" inputmode="decimal" placeholder="km (optional)" value="${v(p.distance)}">
     </div>
-    <input name="calories" type="number" inputmode="numeric" placeholder="Calories burned (optional)">`;
+    <input name="calories" type="number" inputmode="numeric" placeholder="Calories burned (optional)" value="${v(p.calories)}">`;
   return `
-    <input name="name" placeholder="Exercise name" required>
+    <input name="name" placeholder="Exercise name" value="${esc(v(p.name))}" required>
     <div class="frow">
-      <input name="duration" type="number" inputmode="numeric" placeholder="Minutes">
-      <input name="calories" type="number" inputmode="numeric" placeholder="Kcal burned">
+      <input name="duration" type="number" inputmode="numeric" placeholder="Minutes" value="${v(p.duration)}">
+      <input name="calories" type="number" inputmode="numeric" placeholder="Kcal burned" value="${v(p.calories)}">
     </div>
-    <input name="notes" placeholder="Notes (optional)">`;
+    <input name="notes" placeholder="Notes (optional)" value="${esc(v(p.notes))}">`;
 }
 
 function workoutSheetHTML(){
@@ -764,36 +964,80 @@ function workoutSheetHTML(){
     return `<div class="exercise-grid">${EXERCISES.map(ex=>`<button type="button" class="exercise-chip" data-exercise="${ex.id}">${ex.name}</button>`).join('')}</div>`;
   }
   const ex = EXERCISES.find(e=>e.id===sheetExercise);
+  const prefill = editingId ? data.workouts.find(w=>w.id===editingId) : null;
   return `
-    <button type="button" class="back-link" id="backToExercises">${icon('chevL')} ${ex.name}</button>
+    ${editingId ? '' : `<button type="button" class="back-link" id="backToExercises">${icon('chevL')} ${ex.name}</button>`}
     <form id="sheetForm" class="sheet-form">
-      ${exerciseFieldsHTML(ex)}
-      <button type="submit" class="sheet-submit">Add ${ex.name}</button>
+      ${exerciseFieldsHTML(ex, prefill)}
+      <button type="submit" class="sheet-submit">${editingId?'Save changes':`Add ${ex.name}`}</button>
     </form>`;
 }
 
 function renderSheetBody(){
   const body = document.getElementById("sheetBody");
+  const existingWeight = data.weights.find(w=>w.date===date);
+  const isEdit = !!editingId || (sheetKind==="weight" && !!existingWeight);
+  document.getElementById("sheetTitle").textContent = isEdit ? `Edit ${sheetKind}` : "Add entry";
   if(sheetKind==="workout"){
     body.innerHTML = workoutSheetHTML();
     if(sheetExercise){
       document.getElementById("sheetForm").onsubmit = handleSheetSubmit;
-      document.getElementById("backToExercises").onclick = ()=>{ sheetExercise=null; renderSheetBody(); };
+      const back = document.getElementById("backToExercises");
+      if(back) back.onclick = ()=>{ sheetExercise=null; renderSheetBody(); };
     } else {
       document.querySelectorAll("[data-exercise]").forEach(btn=>{
         btn.onclick = ()=>{ sheetExercise = btn.dataset.exercise; renderSheetBody(); };
       });
     }
   } else {
-    body.innerHTML = `<form id="sheetForm">${sheetFormHTML(sheetKind)}</form>`;
+    let prefill = null;
+    if(sheetKind==="food" && editingId) prefill = data.food.find(f=>f.id===editingId);
+    if(sheetKind==="weight" && existingWeight) prefill = {weight: kgToDisplay(existingWeight.weight)};
+    body.innerHTML = sheetFormHTML(sheetKind, prefill);
     document.getElementById("sheetForm").onsubmit = handleSheetSubmit;
+    document.querySelectorAll("[data-recent-food]").forEach(btn=>{
+      btn.onclick = ()=>{
+        const item = data.food.find(f=>f.id===btn.dataset.recentFood);
+        if(!item) return;
+        data.food.push({id:uid(), date, name:item.name, calories:item.calories, protein:item.protein, carbs:item.carbs, fat:item.fat});
+        save(); closeSheet(); render();
+      };
+    });
   }
 }
 
 function openSheet(kind){
   sheetKind = kind;
+  editingId = null;
   if(kind==="workout") sheetExercise = null;
   document.querySelectorAll("#sheetSeg button").forEach(b=>b.classList.toggle("active", b.dataset.kind===kind));
+  document.getElementById("sheetSeg").style.display = "";
+  renderSheetBody();
+  document.getElementById("sheet").classList.add("open");
+  document.getElementById("sheetBackdrop").classList.add("open");
+}
+function openEditFood(id){
+  sheetKind = "food"; editingId = id; sheetExercise = null;
+  document.querySelectorAll("#sheetSeg button").forEach(b=>b.classList.toggle("active", b.dataset.kind==="food"));
+  document.getElementById("sheetSeg").style.display = "none";
+  renderSheetBody();
+  document.getElementById("sheet").classList.add("open");
+  document.getElementById("sheetBackdrop").classList.add("open");
+}
+function openEditWorkout(id){
+  const w = data.workouts.find(x=>x.id===id);
+  if(!w) return;
+  sheetKind = "workout"; editingId = id; sheetExercise = w.exerciseId || 'other';
+  document.querySelectorAll("#sheetSeg button").forEach(b=>b.classList.toggle("active", b.dataset.kind==="workout"));
+  document.getElementById("sheetSeg").style.display = "none";
+  renderSheetBody();
+  document.getElementById("sheet").classList.add("open");
+  document.getElementById("sheetBackdrop").classList.add("open");
+}
+function openEditWeight(){
+  sheetKind = "weight"; editingId = null; sheetExercise = null;
+  document.querySelectorAll("#sheetSeg button").forEach(b=>b.classList.toggle("active", b.dataset.kind==="weight"));
+  document.getElementById("sheetSeg").style.display = "none";
   renderSheetBody();
   document.getElementById("sheet").classList.add("open");
   document.getElementById("sheetBackdrop").classList.add("open");
@@ -801,27 +1045,41 @@ function openSheet(kind){
 function closeSheet(){
   document.getElementById("sheet").classList.remove("open");
   document.getElementById("sheetBackdrop").classList.remove("open");
+  editingId = null;
 }
 function handleSheetSubmit(e){
   e.preventDefault();
   const f = new FormData(e.target);
   if(sheetKind==="food"){
-    data.food.push({id:uid(), date, name:f.get("name"), calories:Number(f.get("calories")||0),
-      protein:Number(f.get("protein")||0), carbs:Number(f.get("carbs")||0), fat:Number(f.get("fat")||0)});
+    const payload = {name:f.get("name"), calories:Number(f.get("calories")||0),
+      protein:Number(f.get("protein")||0), carbs:Number(f.get("carbs")||0), fat:Number(f.get("fat")||0)};
+    if(editingId){
+      const idx = data.food.findIndex(x=>x.id===editingId);
+      if(idx>-1) data.food[idx] = {...data.food[idx], ...payload};
+    } else {
+      data.food.push({id:uid(), date, ...payload});
+    }
   } else if(sheetKind==="workout"){
     const ex = EXERCISES.find(x=>x.id===sheetExercise) || EXERCISES.find(x=>x.id==='other');
+    let payload;
     if(ex.kind==='custom'){
-      data.workouts.push({id:uid(), date, exerciseId:'other', name:f.get("name"), kind:'custom',
-        duration:Number(f.get("duration")||0), calories:Number(f.get("calories")||0), notes:f.get("notes")||""});
+      payload = {exerciseId:'other', name:f.get("name"), kind:'custom',
+        duration:Number(f.get("duration")||0), calories:Number(f.get("calories")||0), notes:f.get("notes")||""};
     } else if(ex.kind==='reps'){
-      data.workouts.push({id:uid(), date, exerciseId:ex.id, name:ex.name, kind:'reps',
-        sets:Number(f.get("sets")||0), reps:Number(f.get("reps")||0), calories:Number(f.get("calories")||0)});
+      payload = {exerciseId:ex.id, name:ex.name, kind:'reps',
+        sets:Number(f.get("sets")||0), reps:Number(f.get("reps")||0), calories:Number(f.get("calories")||0)};
     } else if(ex.kind==='strength'){
-      data.workouts.push({id:uid(), date, exerciseId:ex.id, name:ex.name, kind:'strength',
-        sets:Number(f.get("sets")||0), reps:Number(f.get("reps")||0), weight:Number(f.get("weight")||0), calories:Number(f.get("calories")||0)});
+      payload = {exerciseId:ex.id, name:ex.name, kind:'strength',
+        sets:Number(f.get("sets")||0), reps:Number(f.get("reps")||0), weight:Number(f.get("weight")||0), calories:Number(f.get("calories")||0)};
     } else if(ex.kind==='cardio'){
-      data.workouts.push({id:uid(), date, exerciseId:ex.id, name:ex.name, kind:'cardio',
-        duration:Number(f.get("duration")||0), distance:Number(f.get("distance")||0), calories:Number(f.get("calories")||0)});
+      payload = {exerciseId:ex.id, name:ex.name, kind:'cardio',
+        duration:Number(f.get("duration")||0), distance:Number(f.get("distance")||0), calories:Number(f.get("calories")||0)};
+    }
+    if(editingId){
+      const idx = data.workouts.findIndex(x=>x.id===editingId);
+      if(idx>-1) data.workouts[idx] = {...data.workouts[idx], ...payload};
+    } else {
+      data.workouts.push({id:uid(), date, ...payload});
     }
     sheetExercise = null;
   } else {
@@ -855,6 +1113,15 @@ function attachHandlers(){
   document.querySelectorAll("[data-remove-workout]").forEach(btn=>{
     btn.onclick = ()=>{ data.workouts = data.workouts.filter(w=>w.id!==btn.dataset.removeWorkout); save(); render(); };
   });
+  document.querySelectorAll("[data-edit-food]").forEach(btn=>{
+    btn.onclick = ()=> openEditFood(btn.dataset.editFood);
+  });
+  document.querySelectorAll("[data-edit-workout]").forEach(btn=>{
+    btn.onclick = ()=> openEditWorkout(btn.dataset.editWorkout);
+  });
+  document.querySelectorAll("[data-edit-weight]").forEach(btn=>{
+    btn.onclick = ()=> openEditWeight();
+  });
 
   if(view==="stats"){
     document.querySelectorAll("[data-range]").forEach(btn=>{
@@ -877,6 +1144,8 @@ function attachHandlers(){
     document.querySelectorAll("[data-unit]").forEach(btn=>{
       btn.onclick = ()=>{ data.settings.weightUnit = btn.dataset.unit; save(); render(); };
     });
+    document.getElementById("exportBtn").onclick = exportData;
+    document.getElementById("importBtn").onclick = ()=> document.getElementById("importFile").click();
     document.getElementById("resetBtn").onclick = ()=>{
       if(confirm("Erase all logged food, workouts and weight entries? This can't be undone.")){
         data = structuredClone(DEFAULT); save(); render();
@@ -885,6 +1154,11 @@ function attachHandlers(){
   }
 }
 
+document.getElementById("importFile").addEventListener("change", (e)=>{
+  const file = e.target.files[0];
+  if(file) importDataFromFile(file);
+  e.target.value = "";
+});
 render();
 </script>
 </body>
